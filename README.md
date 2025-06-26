@@ -8,7 +8,7 @@
 
 ## Introduction
 
-I started this project in December 2024 and completed the alpha build in February 2025. My goal was to learn collider physics and machine learning by building a complete analysis pipeline from scratch. This library handles end-to-end analysis of dijet events from ATLAS data, with a focus on QCD scattering and the search for new physics through angular observables. 
+I started this project in December 2024 and completed the alpha build in February 2025 which I used for most of my personal research on scattering. I recently decided to build a release version of my framework to make it more accessible for people to use CERN open data. My goal was to learn collider physics and machine learning by building a complete analysis pipeline from scratch. This library handles end-to-end analysis of dijet events from ATLAS data, with a focus on QCD scattering and the search for new physics through angular observables. 
 
 ## Features
 

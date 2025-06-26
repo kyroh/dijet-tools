@@ -71,10 +71,88 @@ pip install -e .
 
 ## Quick Start
 
-### Basic Usage
+The fastest way to get started is using the command-line interface:
+
+```bash
+# Process large datasets
+dijet-process --input-files "data/*.root" --output-dir "processed"
+
+# Train models
+dijet-train --config configs/default.yaml
+
+# Run inference
+dijet-predict --model-path "models/xgboost_model.pkl" --data-path "processed/"
+
+# Anomaly detection
+dijet-anomaly --threshold 0.95 --output-dir "anomalies"
+```
+
+## Usage
+
+### Command Line Interface
+
+The package provides several command-line tools for different analysis stages:
+
+#### Data Processing
+
+```bash
+# Process ATLAS ROOT files
+dijet-process --input-files "data/*.root" --output-dir "processed"
+
+# Process with custom configuration
+dijet-process --config configs/custom.yaml --chunk-size 50000
+
+# Process with distributed computing
+dijet-process --n-workers 4 --memory-limit "8GB"
+```
+
+#### Model Training
+
+```bash
+# Train XGBoost model
+dijet-train --config configs/default.yaml
+
+# Train neural network
+dijet-train --model-type neural_network --epochs 100
+
+# Train with GPU acceleration
+dijet-train --use-gpu --batch-size 1024
+```
+
+#### Inference and Prediction
+
+```bash
+# Run inference on processed data
+dijet-predict --model-path "models/xgboost_model.pkl" --data-path "processed/"
+
+# Generate predictions with confidence intervals
+dijet-predict --output-format "hdf5" --include-uncertainty
+
+# Batch prediction on multiple datasets
+dijet-predict --input-pattern "processed/*.h5" --output-dir "predictions"
+```
+
+#### Anomaly Detection
+
+```bash
+# Run anomaly detection
+dijet-anomaly --threshold 0.95 --output-dir "anomalies"
+
+# Use isolation forest method
+dijet-anomaly --method isolation_forest --contamination 0.1
+
+# Generate anomaly score distributions
+dijet-anomaly --plot-scores --output-format "pdf"
+```
+
+### Python API
+
+For more advanced usage, you can use the Python API directly:
 
 ```python
 from dijet_tools import ATLASDataLoader, LargeScaleATLASProcessor, XGBoostPredictor
+from dijet_tools.models import NeuralNetworkPredictor
+from dijet_tools.evaluation import PhysicsMetrics
 
 # Load and process ATLAS data
 loader = ATLASDataLoader("path/to/atlas/data.root")
@@ -84,29 +162,89 @@ processor = LargeScaleATLASProcessor()
 processed_data = processor.process_dataset(loader, chunk_size=100000)
 
 # Train XGBoost model
-model = XGBoostPredictor()
-model.train(processed_data)
+xgb_model = XGBoostPredictor()
+xgb_model.train(processed_data)
+
+# Train neural network
+nn_model = NeuralNetworkPredictor()
+nn_model.train(processed_data, epochs=100, batch_size=1024)
 
 # Make predictions
-predictions = model.predict(processed_data)
+xgb_predictions = xgb_model.predict(processed_data)
+nn_predictions = nn_model.predict(processed_data)
+
+# Evaluate physics performance
+metrics = PhysicsMetrics()
+results = metrics.evaluate(xgb_predictions, processed_data)
 ```
 
-### Command Line Interface
+### Advanced Usage Examples
 
-The package provides several command-line tools:
+#### Custom Feature Engineering
 
-```bash
-# Process large datasets
-dijet-process --input-files "/path/to/data/*.root.1" --output-dir "processed"
+```python
+from dijet_tools.features import FeatureEngineer
+from dijet_tools.physics import KinematicCalculator
 
-# Train models
-dijet-train --config configs/default.yaml #make sure to edit the yaml to include your processed data files as an input
+# Create custom features
+calculator = KinematicCalculator()
+features = FeatureEngineer()
 
-# Run inference
-dijet-predict --model-path "models/xgboost_model.pkl" --data-path "processed/"
+# Add custom angular observables
+custom_features = features.add_angular_observables(
+    processed_data, 
+    include_centrality=True,
+    include_balance_variables=True
+)
 
-# Anomaly detection
-dijet-anomaly --threshold 0.95 --output-dir "anomalies"
+# Add QCD-motivated features
+qcd_features = features.add_qcd_features(
+    custom_features,
+    include_color_flow=True,
+    include_jet_substructure=True
+)
+```
+
+#### Distributed Processing
+
+```python
+from dijet_tools.pipeline import DistributedProcessor
+from dask.distributed import Client
+
+# Set up distributed computing
+client = Client(n_workers=4, memory_limit="8GB")
+processor = DistributedProcessor(client)
+
+# Process large dataset
+results = processor.process_large_dataset(
+    "data/large_dataset.root",
+    chunk_size=100000,
+    output_dir="processed"
+)
+```
+
+#### Model Comparison and Ensemble
+
+```python
+from dijet_tools.models import ModelEnsemble
+from dijet_tools.evaluation import ModelComparison
+
+# Create ensemble of models
+ensemble = ModelEnsemble([
+    XGBoostPredictor(),
+    NeuralNetworkPredictor(),
+    IsolationForestPredictor()
+])
+
+# Train ensemble
+ensemble.train(processed_data)
+
+# Compare model performance
+comparison = ModelComparison()
+comparison_results = comparison.compare_models(
+    [xgb_model, nn_model, ensemble],
+    processed_data
+)
 ```
 
 ## Configuration
@@ -164,6 +302,64 @@ Key observables include:
 - **Jet Properties**: JVT, b-tagging, pileup corrections
 - **Event-Level Features**: MET, vertex information, trigger bits
 
+## Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+### Getting Started
+
+1. **Fork the repository** on GitHub
+2. **Clone your fork** locally:
+   ```bash
+   git clone https://github.com/your-username/dijet-tools.git
+   cd dijet-tools
+   ```
+3. **Create a virtual environment** and install dependencies:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -e .[dev]
+   ```
+
+### Contributing
+
+**Create a feature branch**:
+```bash
+git checkout -b feature/your-feature-name
+git add .
+git commit -m "Add new feature: description of changes"
+git push origin feature/your-feature-name
+# Then create a pull request on GitHub
+```
+
+### Contribution Guidelines
+
+- **Documentation**: Update docstrings and README as needed
+- **Physics**: Ensure physics calculations are correct and well-documented
+- **Performance**: Consider performance implications for large datasets
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+If you use this code in your research, please cite:
+
+```bibtex
+@software{dijet_tools,
+  title={ATLAS Dijet Analysis Toolkit},
+  author={Tarajos, Aaron W.},
+  year={2025},
+  url={https://github.com/kyroh/dijet-tools}
+}
+```
+
+## Contact
+
+- **Author**: Aaron W. Tarajos
+- **Email**: awtarajos@berkeley.edu
+- **GitHub**: [@kyroh](https://github.com/kyroh)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

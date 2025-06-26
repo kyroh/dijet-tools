@@ -363,23 +363,3 @@ If you use this code in your research, please cite:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@software{dijet_tools,
-  title={ATLAS Dijet Analysis Toolkit},
-  author={Tarajos, Aaron W.},
-  year={2025},
-  url={https://github.com/kyroh/dijet-tools}
-}
-```
-
-## Contact
-
-- **Author**: Aaron W. Tarajos
-- **Email**: awtarajos@berkeley.edu
-- **GitHub**: [@kyroh](https://github.com/kyroh)
-

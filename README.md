@@ -97,10 +97,10 @@ The package provides several command-line tools:
 
 ```bash
 # Process large datasets
-dijet-process --input-files "data/*.root" --output-dir "processed"
+dijet-process --input-files "/path/to/data/*.root.1" --output-dir "processed"
 
 # Train models
-dijet-train --config configs/default.yaml
+dijet-train --config configs/default.yaml #make sure to edit the yaml to include your processed data files as an input
 
 # Run inference
 dijet-predict --model-path "models/xgboost_model.pkl" --data-path "processed/"

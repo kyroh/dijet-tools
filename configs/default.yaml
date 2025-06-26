@@ -1,0 +1,59 @@
+# Input/Output Configuration
+input_files: []  # List of ATLAS ROOT files to process
+output_dir: "output"
+log_level: "INFO"
+experiment_name: "atlas_dijet_analysis"
+
+# Data Processing Configuration
+data:
+  chunk_size: 100000              # Events per processing chunk
+  max_memory_gb: 64.0             # Maximum memory usage (GB)
+  cache_dir: "cache"             # Directory for caching processed chunks
+  output_format: "parquet"       # Output format: parquet, hdf5, zarr
+  compression: "snappy"          # Compression algorithm
+  progress_interval: 10000       # Progress update interval
+
+# Physics Analysis Configuration  
+physics:
+  min_jets: 2                    # Minimum number of jets required
+  pt_threshold_gev: 50.0         # Minimum jet pT threshold (GeV)
+  eta_threshold: 4.5             # Maximum |eta| for jets
+  jvt_threshold: 0.5             # Jet Vertex Tagger threshold
+  mjj_min_gev: 200.0            # Minimum dijet mass (GeV)
+  pt_balance_min: 0.3            # Minimum pT balance requirement
+  max_delta_y: 10.0              # Maximum rapidity separation
+
+# Machine Learning Configuration
+model:
+  test_size: 0.2                 # Fraction of data for testing
+  validation_size: 0.2           # Fraction of training data for validation
+  random_state: 42               # Random seed for reproducibility
+  feature_scaling: "robust"      # Feature scaling method: robust, standard, minmax
+  
+  # XGBoost hyperparameters
+  xgb_params:
+    objective: "reg:squarederror"
+    max_depth: 6
+    learning_rate: 0.1
+    n_estimators: 1000
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+    early_stopping_rounds: 50
+  
+  # Neural network hyperparameters
+  nn_params:
+    hidden_layers: [256, 128, 64, 32]
+    dropout_rate: 0.2
+    batch_size: 256
+    epochs: 200
+    learning_rate: 0.001
+    physics_loss_weight: 0.1
+
+# Computing Infrastructure Configuration
+compute:
+  n_workers: 4                   # Number of parallel workers
+  scheduler_address: null        # Dask scheduler address (null for local)
+  memory_limit_per_worker: "16GB" # Memory limit per worker
+  use_distributed: true        # Enable distributed computing
+  gpu_enabled: false            # Enable GPU acceleration
